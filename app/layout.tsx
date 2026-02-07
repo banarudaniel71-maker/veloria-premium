@@ -6,9 +6,12 @@ export const metadata: Metadata = {
   title: "Veloria Cocktails | Premium Mobile Bar",
   description:
     "Premium Mobile Cocktailbar für Hochzeiten, Geburtstage & Corporate Events in München & Umgebung.",
+    export const metadata = {
+  verification: {
+    google: "PASTE_AICI_CODUL_DE_LA_GOOGLE",
+  },
 };
-
-const nav = [
+};
   { href: "/pakete", label: "Pakete & Preise" },
   { href: "/menu", label: "Cocktail Menü" },
   { href: "/galerie", label: "Galerie" },
