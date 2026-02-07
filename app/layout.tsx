@@ -7,8 +7,7 @@ export const metadata: Metadata = {
   description:
     "Premium Mobile Cocktailbar für Hochzeiten, Geburtstage & Corporate Events in München & Umgebung.",
   verification: {
-    // 👇 AICI pui codul de la Google Search Console (DOAR content-ul)
-    google: "BrFjvvO6LJX7sNq",
+    google: "google-site-verification" content="BrFjvvO6LJX7sNqKVXZ6qxvI6z0wZUil64vFHytCdow",
   },
 };
 
