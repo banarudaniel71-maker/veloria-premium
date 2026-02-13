@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import {
   Sparkles,
   Clock,
@@ -20,16 +20,22 @@ import { useMemo, useRef } from "react";
 
 import HomeGalleryLightbox from "./components/HomeGalleryLightbox";
 
-const fadeUp = {
+/** ✅ FIX: typed Variants + easing compatible with TS (no "easeOut" string) */
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 18 },
   show: (i = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, delay: i * 0.08, ease: "easeOut" },
+    transition: {
+      duration: 0.7,
+      delay: i * 0.08,
+      // easeOut-like cubic bezier
+      ease: [0.22, 1, 0.36, 1],
+    },
   }),
 };
 
-const container = {
+const container: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.08 } },
 };
@@ -66,7 +72,7 @@ function AnimatedNumber({ to, suffix = "" }: { to: number; suffix?: string }) {
       <motion.span
         initial={{ y: 6, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
         {steps[steps.length - 1]}
       </motion.span>
@@ -219,11 +225,7 @@ export default function HomePage() {
                 machen.
               </motion.h1>
 
-              <motion.p
-                variants={fadeUp}
-                custom={2}
-                className="mt-5 max-w-xl text-base text-white/85 sm:text-lg"
-              >
+              <motion.p variants={fadeUp} custom={2} className="mt-5 max-w-xl text-base text-white/85 sm:text-lg">
                 Stilvolles Setup, Premium-Zutaten, schneller Service — für Hochzeiten, Geburtstage & Corporate Events.
                 Wir bringen echtes Bar-Feeling direkt zu euch.
               </motion.p>
@@ -280,10 +282,7 @@ export default function HomePage() {
                     { name: "Sex on the Beach", img: "/images/sex-on-the-beach.png" },
                     { name: "Piña Colada", img: "/images/pina-colada.png" },
                   ].map((x) => (
-                    <div
-                      key={x.name}
-                      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5"
-                    >
+                    <div key={x.name} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5">
                       <Image
                         src={x.img}
                         alt={x.name}
@@ -383,7 +382,7 @@ export default function HomePage() {
               <motion.div
                 key={c.title}
                 whileHover={{ y: -4 }}
-                transition={{ duration: 0.25 }}
+                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl"
               >
                 <div className="absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_20%_10%,rgba(236,72,153,0.18),transparent_45%),radial-gradient(circle_at_80%_15%,rgba(245,158,11,0.14),transparent_45%),radial-gradient(circle_at_30%_90%,rgba(16,185,129,0.12),transparent_55%)]" />
@@ -444,7 +443,8 @@ export default function HomePage() {
             Klar. Schnell. Stressfrei.
           </motion.h2>
           <motion.p variants={fadeUp} className="mt-3 max-w-2xl text-white/80">
-            Du wählst Gästezahl, Dauer & Add-ons — wir zeigen dir sofort Premium-Optionen. Danach bestätigen wir kurz die Details.
+            Du wählst Gästezahl, Dauer & Add-ons — wir zeigen dir sofort Premium-Optionen. Danach bestätigen wir kurz die
+            Details.
           </motion.p>
 
           <motion.div variants={fadeUp} className="mt-8 grid gap-4 md:grid-cols-4">
