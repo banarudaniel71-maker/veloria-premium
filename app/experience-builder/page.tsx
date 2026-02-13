@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
   Sparkles,
   ArrowRight,
@@ -20,14 +20,14 @@ import {
   quoteAllVariants,
   type AddonKey,
   type DateType,
-} from "../lib/pricing";
+} from "../lib/pricing"; // ✅ corect pentru structura ta: app/lib/pricing.ts
 
-const wrap = {
+const wrap: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.06 } },
 };
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 12 },
   show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
 };
@@ -126,7 +126,7 @@ export default function ExperienceBuilderPage() {
           <motion.div variants={fadeUp} className="flex flex-wrap gap-2">
             <Pill icon={<Sparkles size={14} />} text="Experience Builder" />
             <Pill icon={<BadgeCheck size={14} />} text="Preis in 60 Sekunden" />
-            <Pill icon={<Clock size={14} />} text="Antwort in 2h" />
+            <Pill icon={<Clock size={14} />} text="Antwort in 24h" />
           </motion.div>
 
           <motion.h1 variants={fadeUp} className="mt-5 text-3xl sm:text-5xl font-extrabold tracking-tight">
@@ -137,8 +137,8 @@ export default function ExperienceBuilderPage() {
           </motion.h1>
 
           <motion.p variants={fadeUp} className="mt-4 max-w-2xl text-sm sm:text-base text-white/85 leading-7">
-            Du wählst Gästezahl, Dauer, Add-ons & Entfernung — wir zeigen dir sofort 3 Premium-Optionen. Danach übernehmen
-            wir alles in das Kontaktformular (vor-ausgefüllt).
+            Du wählst Gästezahl, Dauer, Add-ons & Entfernung — wir zeigen dir sofort 3 Optionen. Danach übernehmen wir
+            alles in das Kontaktformular (vor-ausgefüllt).
           </motion.p>
 
           <motion.div variants={fadeUp}>
@@ -258,7 +258,9 @@ export default function ExperienceBuilderPage() {
                           onClick={() => setDateType(x.v)}
                           className={[
                             "rounded-3xl border p-5 text-left transition backdrop-blur",
-                            dateType === x.v ? "border-white/30 bg-white/15" : "border-white/15 bg-white/10 hover:bg-white/12",
+                            dateType === x.v
+                              ? "border-white/30 bg-white/15"
+                              : "border-white/15 bg-white/10 hover:bg-white/12",
                           ].join(" ")}
                         >
                           <div className="flex items-center justify-between">
@@ -381,7 +383,7 @@ export default function ExperienceBuilderPage() {
                     <div className="mt-6 rounded-3xl border border-white/15 bg-black/20 p-6">
                       <div className="text-sm font-black text-white">Weiter</div>
                       <div className="mt-2 text-sm text-white/80 leading-6">
-                        Klick auf „Datum sichern“ — wir übernehmen alles ins Kontaktformular (vor-ausgefüllt).
+                        Klick auf „Anfrage senden“ — wir übernehmen alles ins Kontaktformular (vor-ausgefüllt).
                       </div>
 
                       <div className="mt-5 flex flex-wrap gap-3">
@@ -389,7 +391,7 @@ export default function ExperienceBuilderPage() {
                           href={prefillLink}
                           className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-fuchsia-500 via-pink-500 to-amber-400 px-6 py-3 text-sm font-black text-white hover:opacity-95 transition"
                         >
-                          Datum sichern <ArrowRight size={18} />
+                          Anfrage senden <ArrowRight size={18} />
                         </Link>
 
                         <Link
