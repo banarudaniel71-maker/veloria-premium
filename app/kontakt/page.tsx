@@ -1,13 +1,13 @@
-// file: app/kontakt/page.tsx
 "use client";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 const brand = {
-  phone: "+49 000 000000",
-  email: "kontakt@veloria-cocktails.de",
+  phone: "+49 000 000000", // schimbăm după
+  email: "kontakt@veloria-cocktails.de", // schimbăm după
   whatsapp:
     "https://wa.me/490000000000?text=Hallo%20Veloria%20Cocktails!%20Ich%20m%C3%B6chte%20ein%20Angebot%20anfragen.",
 };
@@ -24,33 +24,35 @@ function Card({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function KontaktPage() {
-  const searchParams = useSearchParams();
+/** ✅ Componenta care folosește useSearchParams trebuie să stea în Suspense */
+function KontaktInner() {
+  const sp = useSearchParams();
 
-  const guests = searchParams.get("guests");
-  const hours = searchParams.get("hours");
-  const distanceKm = searchParams.get("distanceKm");
-  const dateType = searchParams.get("dateType");
-  const addons = searchParams.get("addons");
-  const recommended = searchParams.get("recommended");
-  const price = searchParams.get("price");
+  // Query din /experience-builder (prefill)
+  const guests = sp.get("guests") || "";
+  const hours = sp.get("hours") || "";
+  const distanceKm = sp.get("distanceKm") || "";
+  const dateType = sp.get("dateType") || "";
+  const addons = sp.get("addons") || "";
+  const recommended = sp.get("recommended") || "";
+  const price = sp.get("price") || "";
 
-  const hasPrefill = Boolean(guests || hours || addons || price);
+  const prefillMessage = useMemo(() => {
+    const parts: string[] = [];
+    if (guests) parts.push(`Gäste: ${guests}`);
+    if (hours) parts.push(`Dauer: ${hours}h`);
+    if (distanceKm) parts.push(`Entfernung: ${distanceKm}km`);
+    if (dateType) parts.push(`Datum-Typ: ${dateType}`);
+    if (addons) parts.push(`Add-ons: ${addons}`);
+    if (recommended) parts.push(`Empfehlung: ${recommended}`);
+    if (price) parts.push(`Preis (Schätzung): ${price}€`);
 
-  const prefilledMessage = hasPrefill
-    ? `📊 Anfrage über Experience Builder
+    return parts.length
+      ? `Hallo Veloria,\n\nich möchte ein Angebot anfragen.\n\n${parts.join(" • ")}\n\nWünsche / Location:\n`
+      : "";
+  }, [guests, hours, distanceKm, dateType, addons, recommended, price]);
 
-Empfohlenes Paket: ${recommended ?? "-"}
-Geschätzter Preis: ${price ? `${price} €` : "-"}
-
-Gäste: ${guests ?? "-"}
-Dauer: ${hours ? `${hours} Stunden` : "-"}
-Entfernung: ${distanceKm ? `${distanceKm} km` : "-"}
-Tag: ${dateType ?? "-"}
-Add-ons: ${addons ? addons.replaceAll(",", ", ") : "-"}
-
-Bitte Termin prüfen und Details bestätigen.`
-    : "";
+  const [message, setMessage] = useState(prefillMessage);
 
   return (
     <main className="py-14 sm:py-16">
@@ -61,12 +63,6 @@ Bitte Termin prüfen und Details bestätigen.`
           <p className="mt-4 text-sm sm:text-base text-white/85 leading-7 max-w-2xl">
             Schreib uns Datum, Gästezahl und Location – wir senden dir ein klares Angebot inkl. Menü-Vorschlag.
           </p>
-
-          {hasPrefill ? (
-            <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-emerald-400 px-4 py-2 text-xs font-black text-black">
-              ✅ Details aus dem Experience Builder übernommen
-            </div>
-          ) : null}
         </motion.div>
 
         <div className="mt-10 grid gap-4 lg:grid-cols-2">
@@ -127,7 +123,7 @@ Bitte Termin prüfen und Details bestätigen.`
                   <input
                     type="number"
                     min={1}
-                    defaultValue={guests ? Number(guests) : undefined}
+                    defaultValue={guests || undefined}
                     className="h-11 rounded-2xl border border-white/15 bg-black/25 px-4 text-sm outline-none focus:ring-2 focus:ring-white/30"
                     placeholder="z. B. 60"
                   />
@@ -138,7 +134,8 @@ Bitte Termin prüfen und Details bestätigen.`
                 <label className="text-xs text-white/80">Location / Wünsche</label>
                 <textarea
                   rows={6}
-                  defaultValue={prefilledMessage}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                   className="rounded-2xl border border-white/15 bg-black/25 p-4 text-sm outline-none focus:ring-2 focus:ring-white/30"
                   placeholder="Location, Paketwunsch, Cocktail-Vibe, Mocktails…"
                 />
@@ -150,15 +147,6 @@ Bitte Termin prüfen und Details bestätigen.`
               >
                 Anfrage senden
               </button>
-
-              {!hasPrefill ? (
-                <Link
-                  href="/experience-builder"
-                  className="text-sm font-bold underline decoration-white/25 hover:decoration-white/60"
-                >
-                  Lieber Preis sofort sehen? → Experience Builder öffnen
-                </Link>
-              ) : null}
             </form>
           </Card>
 
@@ -199,5 +187,13 @@ Bitte Termin prüfen und Details bestätigen.`
         </div>
       </Container>
     </main>
+  );
+}
+
+export default function KontaktPage() {
+  return (
+    <Suspense fallback={<div className="py-14 sm:py-16 text-white/70 text-center">Lade Kontaktformular…</div>}>
+      <KontaktInner />
+    </Suspense>
   );
 }
