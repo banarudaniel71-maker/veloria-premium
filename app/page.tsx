@@ -19,7 +19,9 @@ import {
 import { useMemo, useRef } from "react";
 
 import HomeGalleryLightbox from "./components/HomeGalleryLightbox";
-
+import CursorGlow from "./components/CursorGlow";
+import TiltCard from "./components/TiltCard";
+import HeroCinematic from "./components/HeroCinematic";
 /** ✅ FIX: typed Variants + easing compatible with TS (no "easeOut" string) */
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 18 },
@@ -29,7 +31,6 @@ const fadeUp: Variants = {
     transition: {
       duration: 0.7,
       delay: i * 0.08,
-      // easeOut-like cubic bezier
       ease: [0.22, 1, 0.36, 1],
     },
   }),
@@ -82,21 +83,16 @@ function AnimatedNumber({ to, suffix = "" }: { to: number; suffix?: string }) {
 }
 
 export default function HomePage() {
-  const heroRef = useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
-  const glowOpacity = useTransform(scrollYProgress, [0, 1], [0.9, 0.35]);
+ const { scrollY } = useScroll();
+const bgY = useTransform(scrollY, [0, 600], ["0%", "18%"]);
+const glowOpacity = useTransform(scrollY, [0, 600], [0.9, 0.35]);
 
   const categories = [
     {
       title: "Signature Cocktails",
       desc: "Unsere Highlights — perfekt ausbalanciert, fotogen und crowd-pleaser.",
       tags: ["Elegant", "Modern", "Wow"],
-      img: "/images/pornstar-martini.png",
+      img: "/images/pornstar-martini.jpg",
       icon: <Martini size={18} />,
       href: "/menu",
     },
@@ -176,137 +172,10 @@ export default function HomePage() {
 
   return (
     <main className="text-white">
-      {/* HERO */}
-      <section ref={heroRef} className="relative overflow-hidden pt-16 sm:pt-20">
-        <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">
-          <Image
-            src="/images/hero-mobile-bar.jpg"
-            alt="Veloria Cocktails Premium Mobile Bar"
-            fill
-            priority
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-black/60" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(236,72,153,0.28),transparent_45%),radial-gradient(circle_at_80%_15%,rgba(245,158,11,0.24),transparent_45%),radial-gradient(circle_at_30%_90%,rgba(16,185,129,0.18),transparent_55%)]" />
-        </motion.div>
+      {/* ✅ WOW: Cursor Glow Follow (desktop) */}
+      <CursorGlow />
 
-        <motion.div
-          style={{ opacity: glowOpacity }}
-          className="pointer-events-none absolute -top-24 left-1/2 h-72 w-[44rem] -translate-x-1/2 rounded-full bg-gradient-to-r from-pink-500/25 via-amber-400/15 to-emerald-400/20 blur-3xl"
-        />
-
-        <div className="mx-auto max-w-6xl px-6 pb-16">
-          <motion.div
-            variants={container}
-            initial="hidden"
-            animate="show"
-            className="grid gap-10 lg:grid-cols-2 lg:items-center"
-          >
-            <div>
-              <motion.div variants={fadeUp} custom={0} className="flex flex-wrap gap-2">
-                <Pill icon={<Sparkles size={14} />} text="Premium Mobile Bar • München & Umgebung" />
-                <Pill icon={<ShieldCheck size={14} />} text="Sauber • Schnell • Stilvoll" />
-                <Pill icon={<Clock size={14} />} text="Antwort in 2h" />
-              </motion.div>
-
-              <motion.h1
-                variants={fadeUp}
-                custom={1}
-                className="mt-6 text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl"
-              >
-                Cocktails, die aus{" "}
-                <span className="bg-gradient-to-r from-pink-400 to-amber-300 bg-clip-text text-transparent">
-                  einem guten
-                </span>{" "}
-                Event ein{" "}
-                <span className="bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">
-                  unvergessliches
-                </span>{" "}
-                machen.
-              </motion.h1>
-
-              <motion.p variants={fadeUp} custom={2} className="mt-5 max-w-xl text-base text-white/85 sm:text-lg">
-                Stilvolles Setup, Premium-Zutaten, schneller Service — für Hochzeiten, Geburtstage & Corporate Events.
-                Wir bringen echtes Bar-Feeling direkt zu euch.
-              </motion.p>
-
-              <motion.div variants={fadeUp} custom={3} className="mt-7 flex flex-wrap gap-3">
-                {/* PRIMARY CTA -> Builder */}
-                <Link
-                  href="/experience-builder"
-                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-orange-500 px-6 py-3 text-sm font-semibold shadow-xl hover:opacity-95 transition"
-                >
-                  Preis in 60 Sekunden <ArrowRight size={18} />
-                </Link>
-
-                {/* SECONDARY CTA -> Contact */}
-                <Link
-                  href="/kontakt"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold backdrop-blur hover:bg-white/15 transition"
-                >
-                  Beratung anfragen
-                </Link>
-
-                <Link
-                  href="/pakete"
-                  className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-transparent px-6 py-3 text-sm font-semibold hover:bg-white/10 transition"
-                >
-                  Pakete & Preise
-                </Link>
-              </motion.div>
-
-              <motion.div variants={fadeUp} custom={4} className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <Stat label="Antwort" value="innerhalb 2h" hint="Schnell & klar" />
-                <Stat label="Look" value="modern & premium" hint="Fotogen, stilvoll" />
-                <Stat label="Service" value="München & Umgebung" hint="Mobil & flexibel" />
-              </motion.div>
-            </div>
-
-            <motion.div variants={fadeUp} custom={5} className="relative">
-              <div className="rounded-3xl border border-white/10 bg-black/30 p-5 backdrop-blur-xl shadow-2xl">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-semibold text-white/90">Highlights</div>
-                  <div className="flex items-center gap-1 text-white/80">
-                    <Star size={16} />
-                    <Star size={16} />
-                    <Star size={16} />
-                    <Star size={16} />
-                    <Star size={16} />
-                  </div>
-                </div>
-
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {[
-                    { name: "Pornstar Martini", img: "/images/pornstar-martini.png" },
-                    { name: "Mai Tai", img: "/images/mai-tai.png" },
-                    { name: "Sex on the Beach", img: "/images/sex-on-the-beach.png" },
-                    { name: "Piña Colada", img: "/images/pina-colada.png" },
-                  ].map((x) => (
-                    <div key={x.name} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                      <Image
-                        src={x.img}
-                        alt={x.name}
-                        width={700}
-                        height={450}
-                        className="h-32 w-full object-cover transition duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                      <div className="absolute bottom-3 left-3 right-3 text-sm font-semibold">{x.name}</div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/80">
-                  <span className="font-semibold text-white">Pro Tipp:</span> Für den „WOW“-Faktor kombinieren wir warmes Licht,
-                  frische Garnituren und einen Signature-Menü-Vibe.
-                </div>
-              </div>
-
-              <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[2.5rem] bg-gradient-to-r from-pink-500/10 via-amber-400/10 to-emerald-400/10 blur-2xl" />
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
+      <HeroCinematic />
 
       {/* WHY */}
       <section className="mx-auto max-w-6xl px-6 py-14">
@@ -364,7 +233,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* CATEGORIES */}
+      {/* CATEGORIES (✅ WOW: 3D Tilt + Shine) */}
       <section className="mx-auto max-w-6xl px-6 pb-14">
         <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={container}>
           <motion.p variants={fadeUp} className="text-xs tracking-[0.2em] text-white/60">
@@ -379,10 +248,8 @@ export default function HomePage() {
 
           <motion.div variants={fadeUp} className="mt-8 grid gap-5 md:grid-cols-2">
             {categories.map((c) => (
-              <motion.div
+              <TiltCard
                 key={c.title}
-                whileHover={{ y: -4 }}
-                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl"
               >
                 <div className="absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100 bg-[radial-gradient(circle_at_20%_10%,rgba(236,72,153,0.18),transparent_45%),radial-gradient(circle_at_80%_15%,rgba(245,158,11,0.14),transparent_45%),radial-gradient(circle_at_30%_90%,rgba(16,185,129,0.12),transparent_55%)]" />
@@ -424,7 +291,7 @@ export default function HomePage() {
                     />
                   </div>
                 </div>
-              </motion.div>
+              </TiltCard>
             ))}
           </motion.div>
         </motion.div>
