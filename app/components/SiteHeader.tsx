@@ -1,5 +1,8 @@
 "use client";
 
+"use client";
+
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Menu, X, Sparkles } from "lucide-react";
@@ -41,9 +44,15 @@ export default function SiteHeader() {
       <header className="sticky top-0 z-50 border-b border-white/10 bg-black/30 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
           <Link href="/" className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-r from-pink-500 to-amber-400 font-black text-black">
-              VC
-            </div>
+            <div className="relative h-10 w-10 overflow-hidden rounded-full ring-1 ring-white/15">
+  <Image
+    src="/icons/icon.png"
+    alt="Veloria"
+    fill
+    className="object-cover"
+    priority
+  />
+</div>
             <div className="leading-tight">
               <p className="font-semibold text-white">Veloria Cocktails</p>
               <p className="text-xs text-white/70">München & Umgebung</p>
