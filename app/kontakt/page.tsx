@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useMemo, useState, useEffect, useRef } from "react";
+import { Suspense, useMemo, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 
 const brand = {
@@ -35,7 +35,6 @@ function Card({ children }: { children: React.ReactNode }) {
 function KontaktInner() {
   const sp = useSearchParams();
 
-  // Query din /experience-builder (prefill)
   const guests = sp.get("guests") || "";
   const hours = sp.get("hours") || "";
   const distanceKm = sp.get("distanceKm") || "";
@@ -43,8 +42,6 @@ function KontaktInner() {
   const addons = sp.get("addons") || "";
   const recommended = sp.get("recommended") || "";
   const price = sp.get("price") || "";
-
-  // ✅ Query din Drink Builder (6/3/shot)
   const auswahl = sp.get("auswahl") || "";
 
   const prefillMessage = useMemo(() => {
@@ -57,10 +54,9 @@ function KontaktInner() {
     if (recommended) parts.push(`Empfehlung: ${recommended}`);
     if (price) parts.push(`Preis (Schätzung): ${price}€`);
 
-    const header =
-      parts.length
-        ? `Hallo Veloria,\n\nich möchte ein Angebot anfragen.\n\n${parts.join(" • ")}\n`
-        : `Hallo Veloria,\n\nich möchte ein Angebot anfragen.\n`;
+    const header = parts.length
+      ? `Hallo Veloria,\n\nich möchte ein Angebot anfragen.\n\n${parts.join(" • ")}\n`
+      : `Hallo Veloria,\n\nich möchte ein Angebot anfragen.\n`;
 
     const selectionBlock = auswahl
       ? `\nDrink-Auswahl:\n${decodeURIComponentSafe(auswahl)}\n`
@@ -69,7 +65,6 @@ function KontaktInner() {
     return `${header}${selectionBlock}\nWünsche / Location:\n`;
   }, [guests, hours, distanceKm, dateType, addons, recommended, price, auswahl]);
 
-  // ✅ message se actualizează când vin query params, dar NU rescrie după ce userul a început să editeze
   const [message, setMessage] = useState(prefillMessage);
   const didUserEdit = useRef(false);
 
@@ -88,10 +83,10 @@ function KontaktInner() {
           <p className="text-xs font-black tracking-[0.25em] text-white/70">KONTAKT</p>
           <h1 className="mt-3 text-3xl sm:text-4xl font-semibold text-white">Angebot anfragen</h1>
           <p className="mt-4 text-sm sm:text-base text-white/85 leading-7 max-w-2xl">
-            Schreib uns Datum, Gästezahl und Location – wir senden dir ein klares Angebot inkl. Menü-Vorschlag.
+            Schreib uns Datum, Gästezahl und Location – wir senden dir ein klares Angebot inkl.
+            Menü-Vorschlag.
           </p>
 
-          {/* ✅ mic indicator premium când a venit selecția */}
           {auswahl ? (
             <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs text-white/85 backdrop-blur">
               <span className="h-2 w-2 rounded-full bg-emerald-300/80" />
@@ -101,11 +96,11 @@ function KontaktInner() {
         </motion.div>
 
         <div className="mt-10 grid gap-4 lg:grid-cols-2">
-          {/* Form */}
           <Card>
             <p className="text-sm font-black text-white">Kurze Anfrage</p>
             <p className="mt-2 text-sm text-white/80">
-              (Im nächsten Schritt verbinden wir das Formular mit E-Mail, damit du echte Anfragen bekommst.)
+              Im nächsten Schritt verbinden wir das Formular mit E-Mail, damit du echte Anfragen
+              bekommst.
             </p>
 
             <form
@@ -188,7 +183,6 @@ function KontaktInner() {
             </form>
           </Card>
 
-          {/* Contact / CTA */}
           <Card>
             <p className="text-sm font-black text-white">Schnellkontakt</p>
 
@@ -213,11 +207,15 @@ function KontaktInner() {
               <div className="rounded-2xl border border-white/15 bg-white/10 p-4">
                 <p className="text-xs text-white/75">Ablauf</p>
                 <p className="mt-2 text-sm text-white/85 leading-6">
-                  1) Anfrage senden • 2) Menü & Paket abstimmen • 3) Setup vor Ort • 4) Service & Wow-Momente.
+                  1) Anfrage senden • 2) Menü & Paket abstimmen • 3) Setup vor Ort • 4) Service &
+                  Wow-Momente.
                 </p>
               </div>
 
-              <Link href="/pakete" className="text-sm font-bold underline decoration-white/25 hover:decoration-white/60">
+              <Link
+                href="/pakete"
+                className="text-sm font-bold underline decoration-white/25 hover:decoration-white/60"
+              >
                 Pakete & Preise ansehen →
               </Link>
             </div>
@@ -228,7 +226,22 @@ function KontaktInner() {
   );
 }
 
+function KontaktFallback() {
+  return (
+    <main className="py-14 sm:py-16">
+      <Container>
+        <div className="rounded-3xl border border-white/15 bg-white/10 p-6 text-white/80 backdrop-blur">
+          Kontaktformular lädt...
+        </div>
+      </Container>
+    </main>
+  );
+}
+
 export default function KontaktPage() {
-  // ✅ fără Suspense — evităm fallback-ul „Lade Kontaktformular…” blocat
-  return <KontaktInner />;
+  return (
+    <Suspense fallback={<KontaktFallback />}>
+      <KontaktInner />
+    </Suspense>
+  );
 }
