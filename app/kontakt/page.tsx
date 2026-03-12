@@ -2,15 +2,23 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Suspense, useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 
 const brand = {
-  phone: "+49 000 000000", // schimbăm după
-  email: "kontakt@veloria-cocktails.de", // schimbăm după
+  phone: "+49 15141349865",
+  email: "kontakt@veloria-cocktails.de",
   whatsapp:
-    "https://wa.me/490000000000?text=Hallo%20Veloria%20Cocktails!%20Ich%20m%C3%B6chte%20ein%20Angebot%20anfragen.",
+    "https://wa.me/4915141349865?text=Hallo%20Veloria%20Cocktails!%20Ich%20m%C3%B6chte%20ein%20Angebot%20anfragen.",
 };
+
+function decodeURIComponentSafe(input: string) {
+  try {
+    return decodeURIComponent(input);
+  } catch {
+    return input;
+  }
+}
 
 function Container({ children }: { children: React.ReactNode }) {
   return <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">{children}</div>;
@@ -24,7 +32,6 @@ function Card({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** ✅ Componenta care folosește useSearchParams trebuie să stea în Suspense */
 function KontaktInner() {
   const sp = useSearchParams();
 
@@ -37,6 +44,9 @@ function KontaktInner() {
   const recommended = sp.get("recommended") || "";
   const price = sp.get("price") || "";
 
+  // ✅ Query din Drink Builder (6/3/shot)
+  const auswahl = sp.get("auswahl") || "";
+
   const prefillMessage = useMemo(() => {
     const parts: string[] = [];
     if (guests) parts.push(`Gäste: ${guests}`);
@@ -47,22 +57,47 @@ function KontaktInner() {
     if (recommended) parts.push(`Empfehlung: ${recommended}`);
     if (price) parts.push(`Preis (Schätzung): ${price}€`);
 
-    return parts.length
-      ? `Hallo Veloria,\n\nich möchte ein Angebot anfragen.\n\n${parts.join(" • ")}\n\nWünsche / Location:\n`
-      : "";
-  }, [guests, hours, distanceKm, dateType, addons, recommended, price]);
+    const header =
+      parts.length
+        ? `Hallo Veloria,\n\nich möchte ein Angebot anfragen.\n\n${parts.join(" • ")}\n`
+        : `Hallo Veloria,\n\nich möchte ein Angebot anfragen.\n`;
 
+    const selectionBlock = auswahl
+      ? `\nDrink-Auswahl:\n${decodeURIComponentSafe(auswahl)}\n`
+      : "";
+
+    return `${header}${selectionBlock}\nWünsche / Location:\n`;
+  }, [guests, hours, distanceKm, dateType, addons, recommended, price, auswahl]);
+
+  // ✅ message se actualizează când vin query params, dar NU rescrie după ce userul a început să editeze
   const [message, setMessage] = useState(prefillMessage);
+  const didUserEdit = useRef(false);
+
+  useEffect(() => {
+    if (!didUserEdit.current) setMessage(prefillMessage);
+  }, [prefillMessage]);
 
   return (
     <main className="py-14 sm:py-16">
       <Container>
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+        >
           <p className="text-xs font-black tracking-[0.25em] text-white/70">KONTAKT</p>
           <h1 className="mt-3 text-3xl sm:text-4xl font-semibold text-white">Angebot anfragen</h1>
           <p className="mt-4 text-sm sm:text-base text-white/85 leading-7 max-w-2xl">
             Schreib uns Datum, Gästezahl und Location – wir senden dir ein klares Angebot inkl. Menü-Vorschlag.
           </p>
+
+          {/* ✅ mic indicator premium când a venit selecția */}
+          {auswahl ? (
+            <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs text-white/85 backdrop-blur">
+              <span className="h-2 w-2 rounded-full bg-emerald-300/80" />
+              Drink-Auswahl wurde übernommen
+            </div>
+          ) : null}
         </motion.div>
 
         <div className="mt-10 grid gap-4 lg:grid-cols-2">
@@ -135,7 +170,10 @@ function KontaktInner() {
                 <textarea
                   rows={6}
                   value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  onChange={(e) => {
+                    didUserEdit.current = true;
+                    setMessage(e.target.value);
+                  }}
                   className="rounded-2xl border border-white/15 bg-black/25 p-4 text-sm outline-none focus:ring-2 focus:ring-white/30"
                   placeholder="Location, Paketwunsch, Cocktail-Vibe, Mocktails…"
                 />
@@ -191,9 +229,6 @@ function KontaktInner() {
 }
 
 export default function KontaktPage() {
-  return (
-    <Suspense fallback={<div className="py-14 sm:py-16 text-white/70 text-center">Lade Kontaktformular…</div>}>
-      <KontaktInner />
-    </Suspense>
-  );
+  // ✅ fără Suspense — evităm fallback-ul „Lade Kontaktformular…” blocat
+  return <KontaktInner />;
 }
