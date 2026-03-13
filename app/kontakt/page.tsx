@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Suspense, useMemo, useState, useEffect, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 const brand = {
@@ -32,7 +32,7 @@ function Card({ children }: { children: React.ReactNode }) {
   );
 }
 
-function KontaktInner() {
+function KontaktContent() {
   const sp = useSearchParams();
 
   const guests = sp.get("guests") || "";
@@ -46,6 +46,7 @@ function KontaktInner() {
 
   const prefillMessage = useMemo(() => {
     const parts: string[] = [];
+
     if (guests) parts.push(`Gäste: ${guests}`);
     if (hours) parts.push(`Dauer: ${hours}h`);
     if (distanceKm) parts.push(`Entfernung: ${distanceKm}km`);
@@ -69,7 +70,9 @@ function KontaktInner() {
   const didUserEdit = useRef(false);
 
   useEffect(() => {
-    if (!didUserEdit.current) setMessage(prefillMessage);
+    if (!didUserEdit.current) {
+      setMessage(prefillMessage);
+    }
   }, [prefillMessage]);
 
   return (
@@ -81,10 +84,12 @@ function KontaktInner() {
           transition={{ duration: 0.45 }}
         >
           <p className="text-xs font-black tracking-[0.25em] text-white/70">KONTAKT</p>
-          <h1 className="mt-3 text-3xl sm:text-4xl font-semibold text-white">Angebot anfragen</h1>
-          <p className="mt-4 text-sm sm:text-base text-white/85 leading-7 max-w-2xl">
-            Schreib uns Datum, Gästezahl und Location – wir senden dir ein klares Angebot inkl.
-            Menü-Vorschlag.
+          <h1 className="mt-3 text-3xl sm:text-4xl font-semibold text-white">
+            Angebot anfragen
+          </h1>
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/85 sm:text-base">
+            Schreib uns Datum, Gästezahl und Location – wir senden dir ein klares Angebot
+            inkl. Menü-Vorschlag.
           </p>
 
           {auswahl ? (
@@ -99,8 +104,8 @@ function KontaktInner() {
           <Card>
             <p className="text-sm font-black text-white">Kurze Anfrage</p>
             <p className="mt-2 text-sm text-white/80">
-              Im nächsten Schritt verbinden wir das Formular mit E-Mail, damit du echte Anfragen
-              bekommst.
+              Im nächsten Schritt verbinden wir das Formular mit E-Mail, damit du echte
+              Anfragen bekommst.
             </p>
 
             <form
@@ -176,7 +181,7 @@ function KontaktInner() {
 
               <button
                 type="submit"
-                className="rounded-2xl px-5 py-3 text-sm font-black text-white bg-gradient-to-r from-fuchsia-500 via-pink-500 to-amber-400 hover:opacity-95 transition"
+                className="rounded-2xl bg-gradient-to-r from-fuchsia-500 via-pink-500 to-amber-400 px-5 py-3 text-sm font-black text-white transition hover:opacity-95"
               >
                 Anfrage senden
               </button>
@@ -199,16 +204,16 @@ function KontaktInner() {
 
               <a
                 href={brand.whatsapp}
-                className="rounded-2xl bg-emerald-400 px-5 py-3 text-sm font-black text-black hover:opacity-90 transition text-center"
+                className="rounded-2xl bg-emerald-400 px-5 py-3 text-center text-sm font-black text-black transition hover:opacity-90"
               >
                 WhatsApp öffnen
               </a>
 
               <div className="rounded-2xl border border-white/15 bg-white/10 p-4">
                 <p className="text-xs text-white/75">Ablauf</p>
-                <p className="mt-2 text-sm text-white/85 leading-6">
-                  1) Anfrage senden • 2) Menü & Paket abstimmen • 3) Setup vor Ort • 4) Service &
-                  Wow-Momente.
+                <p className="mt-2 text-sm leading-6 text-white/85">
+                  1) Anfrage senden • 2) Menü & Paket abstimmen • 3) Setup vor Ort • 4)
+                  Service & Wow-Momente.
                 </p>
               </div>
 
@@ -226,22 +231,20 @@ function KontaktInner() {
   );
 }
 
-function KontaktFallback() {
-  return (
-    <main className="py-14 sm:py-16">
-      <Container>
-        <div className="rounded-3xl border border-white/15 bg-white/10 p-6 text-white/80 backdrop-blur">
-          Kontaktformular lädt...
-        </div>
-      </Container>
-    </main>
-  );
-}
-
 export default function KontaktPage() {
   return (
-    <Suspense fallback={<KontaktFallback />}>
-      <KontaktInner />
+    <Suspense
+      fallback={
+        <main className="py-14 sm:py-16">
+          <Container>
+            <div className="rounded-3xl border border-white/15 bg-white/10 p-6 text-white/80 backdrop-blur">
+              Lade Kontaktformular...
+            </div>
+          </Container>
+        </main>
+      }
+    >
+      <KontaktContent />
     </Suspense>
   );
 }
