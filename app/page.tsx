@@ -151,22 +151,28 @@ export default function Page() {
           }
         }
       `}</style>
+<section className="relative isolate min-h-[92vh] overflow-hidden">
+  <div className="absolute inset-0 -z-20">
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      className="h-full w-full scale-[1.04] object-cover object-center brightness-[0.88] saturate-[1.05]"
+    >
+      <source src="/videos/hero-video.mp4" type="video/mp4" />
+    </video>
+  </div>
 
-      <section className="relative isolate min-h-[92vh] overflow-hidden">
-        <div className="absolute inset-0 -z-20">
-          <Image
-            src="/images/hero-veloria-lux.jpg"
-            alt="Veloria Premium Mobile Bar – Cocktailbar für Hochzeiten in München"
-            fill
-            priority
-            className="scale-[1.03] object-cover object-center"
-          />
-        </div>
-
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_15%,rgba(255,255,255,0.14),transparent_26%),radial-gradient(circle_at_78%_18%,rgba(236,72,153,0.18),transparent_30%),radial-gradient(circle_at_70%_70%,rgba(249,115,22,0.14),transparent_28%)]" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/65 via-black/40 to-[#05060a]" />
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:72px_72px] opacity-[0.12]" />
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.28)_100%)]" />
+  <div className="absolute inset-0 -z-10 bg-black/18" />
+  <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_15%,rgba(255,255,255,0.14),transparent_26%),radial-gradient(circle_at_78%_18%,rgba(236,72,153,0.18),transparent_30%),radial-gradient(circle_at_70%_70%,rgba(249,115,22,0.14),transparent_28%)]" />
+  <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/60 via-black/38 to-[#05060a]" />
+  <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:72px_72px] opacity-[0.12]" />
+  <div
+    className="absolute inset-0 -z-10"
+    style={{ background: "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.28) 100%)" }}
+  />
 
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
