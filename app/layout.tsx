@@ -55,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           target="_blank"
           rel="noreferrer"
           aria-label="WhatsApp Kontakt"
-          className="fixed bottom-6 right-6 z-50"
+         className="fixed bottom-6 right-6 z-50 hidden sm:flex"
         >
           <span className="absolute inset-0 rounded-full bg-emerald-500/25 blur-md animate-[pulse_2.2s_infinite]" />
           <span className="absolute -inset-2 rounded-full border border-emerald-400/30 animate-[pulse_2.2s_infinite]" />

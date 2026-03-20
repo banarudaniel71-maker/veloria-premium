@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import DrinkBuilder from "@/app/components/DrinkBuilder";
 
@@ -27,7 +27,6 @@ function Orb({
   );
 }
 
-/** Premium vector shapes (NO emoji) */
 function LimeShape() {
   return (
     <svg width="110" height="110" viewBox="0 0 110 110" fill="none" aria-hidden="true">
@@ -103,6 +102,49 @@ function IceShape() {
   );
 }
 
+type EventKind = "Hochzeit" | "Private Feier" | "Corporate Event" | "Geburtstag";
+
+function EventChip({
+  active,
+  children,
+  onClick,
+}: {
+  active: boolean;
+  children: React.ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+        active
+          ? "border-white/30 bg-white text-black"
+          : "border-white/12 bg-black/15 text-white/80 hover:bg-black/25"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="block">
+      <div className="mb-2 text-xs font-medium uppercase tracking-[0.18em] text-white/50">
+        {label}
+      </div>
+      {children}
+    </label>
+  );
+}
+
 export default function SignatureExperience() {
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -120,9 +162,30 @@ export default function SignatureExperience() {
   const titleOpacity = useTransform(scrollYProgress, [0.05, 0.22], [0, 1]);
   const titleY = useTransform(scrollYProgress, [0.05, 0.22], [18, 0]);
 
+  const [customerName, setCustomerName] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [eventType, setEventType] = useState<EventKind>("Hochzeit");
+  const [eventDate, setEventDate] = useState("");
+  const [location, setLocation] = useState("");
+  const [guests, setGuests] = useState(80);
+
+  const eventSummary = useMemo(() => {
+    return [
+      customerName ? `Name: ${customerName}` : null,
+      customerEmail ? `E-Mail: ${customerEmail}` : null,
+      customerPhone ? `Telefon: ${customerPhone}` : null,
+      `Eventtyp: ${eventType}`,
+      eventDate ? `Datum: ${eventDate}` : null,
+      location ? `Location: ${location}` : null,
+      `Gäste: ${guests}`,
+    ]
+      .filter(Boolean)
+      .join(" • ");
+  }, [customerName, customerEmail, customerPhone, eventType, eventDate, location, guests]);
+
   return (
     <section ref={ref} className="relative isolate overflow-hidden py-20 md:py-28">
-      {/* Background */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-black via-black to-black" />
 
@@ -138,7 +201,6 @@ export default function SignatureExperience() {
         <Orb className="left-[30%] bottom-[-260px] h-[680px] w-[680px]" tone="sky" />
       </div>
 
-      {/* Parallax objects */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <motion.div style={{ y: yLime }} className="absolute left-6 top-10 md:left-16">
           <div className="opacity-80 drop-shadow-[0_40px_70px_rgba(0,0,0,0.70)]">
@@ -166,28 +228,132 @@ export default function SignatureExperience() {
       </div>
 
       <div className="mx-auto max-w-6xl px-5">
-        {/* Header */}
         <motion.div style={{ opacity: titleOpacity, y: titleY }} className="text-center">
           <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-white/80 backdrop-blur">
-            <span className="opacity-90">Veloria Selection Builder</span>
+            <span className="opacity-90">Veloria Event Konfigurator</span>
             <span className="text-white/40">•</span>
             <span>München & Bayern</span>
           </div>
 
           <h2 className="mt-5 text-balance text-3xl font-semibold tracking-tight text-white md:text-5xl">
-            Ihr wählt die Drinks —
-            <span className="text-white/70"> wir bringen Setup, Zutaten & Flow</span>
+            Konfiguriert euer Event —
+            <span className="text-white/70"> von Details bis PDF-Angebot</span>
           </h2>
 
           <p className="mx-auto mt-4 max-w-2xl text-pretty text-sm leading-relaxed text-white/70 md:text-base">
-            Wählt <span className="text-white font-semibold">6 Cocktails</span>,{" "}
-            <span className="text-white font-semibold">3 Mocktails</span>,{" "}
-            <span className="text-white font-semibold">1 Shot Paket</span> und die Shot Sorten.
+            Erst Eventdaten eingeben, danach Drinks auswählen, Preis sehen und direkt
+            ein unverbindliches Premium-PDF herunterladen oder eure Anfrage senden.
           </p>
         </motion.div>
 
+        <div className="mt-10 rounded-[32px] border border-white/12 bg-gradient-to-b from-white/10 to-white/5 p-6 shadow-2xl backdrop-blur-md md:p-8">
+          <div className="grid gap-5 lg:grid-cols-2">
+            <Field label="Name">
+              <input
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="Max Mustermann"
+                className="w-full rounded-2xl border border-white/12 bg-black/20 px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-white/25"
+              />
+            </Field>
+
+            <Field label="E-Mail">
+              <input
+                type="email"
+                value={customerEmail}
+                onChange={(e) => setCustomerEmail(e.target.value)}
+                placeholder="name@email.de"
+                className="w-full rounded-2xl border border-white/12 bg-black/20 px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-white/25"
+              />
+            </Field>
+
+            <Field label="Telefon">
+              <input
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+                placeholder="+49 ..."
+                className="w-full rounded-2xl border border-white/12 bg-black/20 px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-white/25"
+              />
+            </Field>
+
+            <Field label="Eventdatum">
+              <input
+                type="date"
+                value={eventDate}
+                onChange={(e) => setEventDate(e.target.value)}
+                className="w-full rounded-2xl border border-white/12 bg-black/20 px-4 py-3 text-white outline-none focus:border-white/25"
+              />
+            </Field>
+
+            <div className="lg:col-span-2">
+              <Field label="Eventtyp">
+                <div className="flex flex-wrap gap-2">
+                  {["Hochzeit", "Private Feier", "Corporate Event", "Geburtstag"].map((type) => (
+                    <EventChip
+                      key={type}
+                      active={eventType === type}
+                      onClick={() => setEventType(type as EventKind)}
+                    >
+                      {type}
+                    </EventChip>
+                  ))}
+                </div>
+              </Field>
+            </div>
+
+            <div className="lg:col-span-2">
+              <Field label="Location / Ort">
+                <input
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="München, Hotel / Eventlocation / Adresse"
+                  className="w-full rounded-2xl border border-white/12 bg-black/20 px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-white/25"
+                />
+              </Field>
+            </div>
+
+            <div className="lg:col-span-2">
+              <Field label="Gästeanzahl">
+                <div className="rounded-3xl border border-white/10 bg-black/15 p-5">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="text-sm text-white/70">
+                      Je mehr Gäste, desto realistischer wird euer Richtpreis.
+                    </div>
+                    <div className="text-2xl font-semibold text-white">{guests}</div>
+                  </div>
+                  <input
+                    type="range"
+                    min={20}
+                    max={250}
+                    step={5}
+                    value={guests}
+                    onChange={(e) => setGuests(Number(e.target.value))}
+                    className="mt-4 w-full"
+                  />
+                  <div className="mt-2 flex justify-between text-xs text-white/45">
+                    <span>20</span>
+                    <span>250</span>
+                  </div>
+                </div>
+              </Field>
+            </div>
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/65">
+            {eventSummary || "Gebt oben eure Eventdaten ein und konfiguriert danach eure Auswahl."}
+          </div>
+        </div>
+
         <div className="mt-12">
-          <DrinkBuilder />
+          <DrinkBuilder
+            customerName={customerName}
+            customerEmail={customerEmail}
+            customerPhone={customerPhone}
+            eventType={eventType}
+            eventDate={eventDate}
+            location={location}
+            guests={guests}
+          />
         </div>
       </div>
     </section>

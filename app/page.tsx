@@ -2,52 +2,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import React, { useMemo, useState, useRef } from "react";
+import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import SignatureExperience from "@/app/components/SignatureExperience";
 import ParallaxCocktailShowcase from "@/app/components/ParallaxCocktailShowcase";
 
-type EventType = "hochzeit" | "privat" | "corporate";
-type Distance = "muc" | "umgebung" | "bayern";
-type PackageType = "signature" | "classic" | "mocktail";
-
 export default function Page() {
-  const [step, setStep] = useState<1 | 2 | 3>(1);
-
-  const [eventType, setEventType] = useState<EventType>("hochzeit");
-  const [distance, setDistance] = useState<Distance>("muc");
-
-  const [guests, setGuests] = useState(80);
-  const [hours, setHours] = useState(5);
-
-  const [packageType, setPackageType] = useState<PackageType>("signature");
-
-  const calc = useMemo(() => {
-    const perGuest =
-      packageType === "signature" ? 19 : packageType === "classic" ? 15 : 11;
-    const hourly = 170;
-
-    const distanceFee = distance === "muc" ? 0 : distance === "umgebung" ? 120 : 250;
-    const eventFactor =
-      eventType === "hochzeit" ? 1.08 : eventType === "corporate" ? 1.05 : 1.0;
-
-    const min = 1500;
-    const base = (guests * perGuest + hours * hourly + distanceFee) * eventFactor;
-    const total = Math.max(min, Math.round(base / 10) * 10);
-
-    const low = Math.round((total * 0.9) / 10) * 10;
-    const high = Math.round((total * 1.12) / 10) * 10;
-
-    const label =
-      packageType === "signature"
-        ? "Signature Cocktails"
-        : packageType === "classic"
-        ? "Klassiker & Spritz"
-        : "Premium Mocktails 0.0%";
-
-    return { low, high, label, total, perGuest, hourly, distanceFee, eventFactor };
-  }, [guests, hours, packageType, distance, eventType]);
-
   const faq = [
     {
       q: "In welchen Regionen seid ihr verfügbar?",
@@ -90,8 +50,6 @@ export default function Page() {
       acceptedAnswer: { "@type": "Answer", text: f.a },
     })),
   };
-
-  const progress = step === 1 ? 0.33 : step === 2 ? 0.66 : 1.0;
 
   return (
     <main className="relative min-h-screen overflow-hidden text-white">
@@ -151,28 +109,32 @@ export default function Page() {
           }
         }
       `}</style>
-<section className="relative isolate min-h-[92vh] overflow-hidden">
-  <div className="absolute inset-0 -z-20">
-    <video
-      autoPlay
-      muted
-      loop
-      playsInline
-      preload="auto"
-      className="h-full w-full scale-[1.04] object-cover object-center brightness-[0.88] saturate-[1.05]"
-    >
-      <source src="/videos/hero-video.mp4" type="video/mp4" />
-    </video>
-  </div>
 
-  <div className="absolute inset-0 -z-10 bg-black/18" />
-  <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_15%,rgba(255,255,255,0.14),transparent_26%),radial-gradient(circle_at_78%_18%,rgba(236,72,153,0.18),transparent_30%),radial-gradient(circle_at_70%_70%,rgba(249,115,22,0.14),transparent_28%)]" />
-  <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/60 via-black/38 to-[#05060a]" />
-  <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:72px_72px] opacity-[0.12]" />
-  <div
-    className="absolute inset-0 -z-10"
-    style={{ background: "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.28) 100%)" }}
-  />
+      <section className="relative isolate min-h-[92vh] overflow-hidden">
+        <div className="absolute inset-0 -z-20">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="h-full w-full scale-[1.04] object-cover object-center brightness-[0.88] saturate-[1.05]"
+          >
+            <source src="/videos/hero-video.mp4" type="video/mp4" />
+          </video>
+        </div>
+
+        <div className="absolute inset-0 -z-10 bg-black/18" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_15%,rgba(255,255,255,0.14),transparent_26%),radial-gradient(circle_at_78%_18%,rgba(236,72,153,0.18),transparent_30%),radial-gradient(circle_at_70%_70%,rgba(249,115,22,0.14),transparent_28%)]" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/60 via-black/38 to-[#05060a]" />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:72px_72px] opacity-[0.12]" />
+        <div
+          className="absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.28) 100%)",
+          }}
+        />
 
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -212,9 +174,9 @@ export default function Page() {
                 </div>
 
                 <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-[0.97] tracking-[-0.03em] text-white sm:text-5xl lg:text-7xl">
-                  Die mobile Bar,
+                  Veloria Cocktails,
                   <span className="block bg-gradient-to-r from-white via-white to-white/72 bg-clip-text text-transparent">
-                    die sofort nach Premium aussieht.
+                    Die Premium Mobile Bar für München & Bayern.
                   </span>
                 </h1>
 
@@ -441,232 +403,6 @@ export default function Page() {
       <TrustSection />
       <Separator />
 
-      <section id="kalkulator" className="relative">
-        <div className="mx-auto max-w-6xl px-5 py-16 lg:py-20">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-                Preisrechner
-              </h2>
-              <p className="mt-4 max-w-2xl leading-relaxed text-white/75">
-                Drei Schritte – sofort eine unverbindliche Preis-Range. Final bestätigen
-                wir alles im Angebot.
-              </p>
-            </div>
-            <div className="text-sm text-white/65">Schnell • Transparent • Premium</div>
-          </div>
-
-          <div className="mt-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="rounded-3xl border border-white/12 bg-gradient-to-b from-white/14 to-white/6 p-7 shadow-2xl backdrop-blur-md">
-              <div className="flex items-center justify-between gap-3">
-                <div className="text-sm font-semibold text-white/90">
-                  Schritt {step} von 3
-                </div>
-                <div className="flex items-center gap-2">
-                  <Dot active={step >= 1} />
-                  <Dot active={step >= 2} />
-                  <Dot active={step >= 3} />
-                </div>
-              </div>
-
-              <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-white/10">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 transition-all duration-500"
-                  style={{ width: `${Math.round(progress * 100)}%` }}
-                />
-              </div>
-
-              <div className="mt-6">
-                <FadeSwap keyProp={step}>
-                  {step === 1 ? (
-                    <div>
-                      <div className="text-lg font-semibold">Event & Region</div>
-                      <p className="mt-2 text-sm text-white/75">
-                        Anlass und Entfernung – damit wir sauber rechnen.
-                      </p>
-
-                      <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                        <Choice
-                          title="Hochzeit"
-                          subtitle="Premium Fokus"
-                          active={eventType === "hochzeit"}
-                          onClick={() => setEventType("hochzeit")}
-                        />
-                        <Choice
-                          title="Privat"
-                          subtitle="Geburtstag etc."
-                          active={eventType === "privat"}
-                          onClick={() => setEventType("privat")}
-                        />
-                        <Choice
-                          title="Corporate"
-                          subtitle="Business Stil"
-                          active={eventType === "corporate"}
-                          onClick={() => setEventType("corporate")}
-                        />
-                      </div>
-
-                      <div className="mt-7">
-                        <div className="text-sm text-white/75">Region</div>
-                        <div className="mt-3 grid gap-3 sm:grid-cols-3">
-                          <Choice
-                            title="München"
-                            subtitle="0€ Anfahrt"
-                            active={distance === "muc"}
-                            onClick={() => setDistance("muc")}
-                          />
-                          <Choice
-                            title="Umgebung"
-                            subtitle="ca. 20–50 km"
-                            active={distance === "umgebung"}
-                            onClick={() => setDistance("umgebung")}
-                          />
-                          <Choice
-                            title="Bayern"
-                            subtitle="weiterer Radius"
-                            active={distance === "bayern"}
-                            onClick={() => setDistance("bayern")}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ) : step === 2 ? (
-                    <div>
-                      <div className="text-lg font-semibold">Gäste & Dauer</div>
-                      <p className="mt-2 text-sm text-white/75">
-                        Kurz einstellen – später machen wir es exakt im Angebot.
-                      </p>
-
-                      <div className="mt-6 grid gap-6 sm:grid-cols-2">
-                        <SliderCard
-                          label="Gästeanzahl"
-                          value={guests}
-                          min={30}
-                          max={250}
-                          step={5}
-                          onChange={setGuests}
-                        />
-                        <SliderCard
-                          label="Dauer (h)"
-                          value={hours}
-                          min={3}
-                          max={10}
-                          step={1}
-                          onChange={setHours}
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <div className="text-lg font-semibold">Paket</div>
-                      <p className="mt-2 text-sm text-white/75">
-                        Wählt euren Stil – Signature, Klassiker oder 0.0%.
-                      </p>
-
-                      <div className="mt-6 grid gap-3">
-                        <Choice
-                          title="Signature Cocktails"
-                          subtitle="WOW-Drinks, fotogen"
-                          active={packageType === "signature"}
-                          onClick={() => setPackageType("signature")}
-                        />
-                        <Choice
-                          title="Klassiker & Spritz"
-                          subtitle="Beliebt, elegant"
-                          active={packageType === "classic"}
-                          onClick={() => setPackageType("classic")}
-                        />
-                        <Choice
-                          title="Premium Mocktails 0.0%"
-                          subtitle="Alkoholfrei, luxuriös"
-                          active={packageType === "mocktail"}
-                          onClick={() => setPackageType("mocktail")}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </FadeSwap>
-              </div>
-
-              <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <button
-                  onClick={() => setStep((s) => (s > 1 ? ((s - 1) as 1 | 2 | 3) : s))}
-                  disabled={step === 1}
-                  className="inline-flex items-center justify-center rounded-full border border-white/20 bg-black/10 px-6 py-3 text-sm font-semibold text-white/90 transition hover:bg-black/20 disabled:opacity-40"
-                >
-                  Zurück
-                </button>
-
-                <button
-                  onClick={() => setStep((s) => (s < 3 ? ((s + 1) as 1 | 2 | 3) : s))}
-                  disabled={step === 3}
-                  className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 px-6 py-3 text-sm font-semibold text-white shadow-lg disabled:opacity-60"
-                >
-                  Weiter →
-                </button>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-white/12 bg-gradient-to-b from-white/14 to-white/6 p-7 shadow-2xl backdrop-blur-md">
-              <div className="text-sm text-white/65">Eure Kalkulation</div>
-
-              <div className="mt-3 text-4xl font-bold">
-                {calc.low.toLocaleString()} – {calc.high.toLocaleString()} €
-              </div>
-
-              <p className="mt-3 text-sm leading-relaxed text-white/75">
-                <span className="font-semibold text-white/95">
-                  {eventTypeLabel(eventType)}
-                </span>{" "}
-                •{" "}
-                <span className="font-semibold text-white/95">
-                  {distanceLabel(distance)}
-                </span>
-                <br />
-                <span className="font-semibold text-white/95">{guests}</span> Gäste •{" "}
-                <span className="font-semibold text-white/95">{hours}</span> Stunden •{" "}
-                <span className="font-semibold text-white/95">{calc.label}</span>
-              </p>
-
-              <div className="mt-6 rounded-2xl border border-white/12 bg-black/10 p-5">
-                <div className="text-xs text-white/65">Kurz-Breakdown</div>
-                <div className="mt-3 space-y-2 text-sm text-white/80">
-                  <Row k="Pro Gast" v={`${calc.perGuest} €`} />
-                  <Row k="Pro Stunde" v={`${calc.hourly} €`} />
-                  <Row k="Anfahrt" v={`${calc.distanceFee} €`} />
-                  <Row k="Event-Faktor" v={`${Math.round(calc.eventFactor * 100)}%`} />
-                </div>
-              </div>
-
-              <div className="mt-6 rounded-2xl border border-white/12 bg-black/10 p-5 text-xs leading-relaxed text-white/65">
-                *Unverbindlicher Rechner. Final abhängig von Ablauf, Location und Menü.
-              </div>
-
-              <div className="mt-7 flex flex-col gap-3">
-                <Link
-                  href={`/kontakt?guests=${guests}&hours=${hours}&distanceKm=${
-                    distance === "muc" ? 0 : distance === "umgebung" ? 30 : 120
-                  }&dateType=${eventType}&recommended=${encodeURIComponent(
-                    calc.label
-                  )}&price=${calc.total}`}
-                  className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-orange-400 px-6 py-3 text-sm font-semibold text-white shadow-lg"
-                >
-                  Individuelles Angebot anfordern
-                </Link>
-                <a
-                  href="#builder"
-                  className="inline-flex items-center justify-center rounded-full border border-white/20 bg-black/10 px-6 py-3 text-sm font-semibold text-white/90 transition hover:bg-black/20"
-                >
-                  Zur Auswahl Builder →
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <Separator />
-
       <section className="relative">
         <div className="mx-auto max-w-6xl px-5 py-16 lg:py-20">
           <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">FAQ</h2>
@@ -745,109 +481,9 @@ export default function Page() {
   );
 }
 
-function eventTypeLabel(t: EventType) {
-  if (t === "hochzeit") return "Hochzeit";
-  if (t === "corporate") return "Corporate Event";
-  return "Private Feier";
-}
-
-function distanceLabel(d: Distance) {
-  if (d === "muc") return "München";
-  if (d === "umgebung") return "München & Umgebung";
-  return "Bayern";
-}
-
-function Dot({ active }: { active: boolean }) {
-  return <span className={`h-2 w-2 rounded-full ${active ? "bg-white" : "bg-white/25"}`} />;
-}
-
-function Choice({
-  title,
-  subtitle,
-  active,
-  onClick,
-}: {
-  title: string;
-  subtitle: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`rounded-2xl border px-4 py-4 text-left transition ${
-        active ? "border-white/35 bg-white/10" : "border-white/12 bg-black/10 hover:bg-black/20"
-      }`}
-    >
-      <div className="text-sm font-semibold text-white/95">{title}</div>
-      <div className="mt-1 text-xs text-white/65">{subtitle}</div>
-    </button>
-  );
-}
-
-function Row({ k, v }: { k: string; v: string }) {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <div className="text-white/65">{k}</div>
-      <div className="font-semibold text-white/90">{v}</div>
-    </div>
-  );
-}
-
 function Separator() {
-  return <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />;
-}
-
-function FadeSwap({
-  children,
-  keyProp,
-}: {
-  children: React.ReactNode;
-  keyProp: unknown;
-}) {
   return (
-    <div key={String(keyProp)} className="animate-[veloriaFadeUp_380ms_ease-out_both]">
-      {children}
-    </div>
-  );
-}
-
-function SliderCard({
-  label,
-  value,
-  min,
-  max,
-  step,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  step: number;
-  onChange: (n: number) => void;
-}) {
-  return (
-    <div className="rounded-2xl border border-white/12 bg-black/10 p-5">
-      <div className="flex items-end justify-between">
-        <div className="text-sm text-white/75">{label}</div>
-        <div className="text-2xl font-semibold">{value}</div>
-      </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-4 w-full"
-      />
-      <div className="mt-2 flex justify-between text-xs text-white/55">
-        <span>{min}</span>
-        <span>{max}</span>
-      </div>
-    </div>
+    <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
   );
 }
 
